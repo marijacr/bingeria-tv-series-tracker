@@ -4,7 +4,9 @@ const BASE_URL = "https://api.tvmaze.com";
 
 export async function getShows(): Promise<Show[]> {
 
-    const response = await fetch(`${BASE_URL}/shows?page=0`);
+    const response = await fetch(`${BASE_URL}/shows?page=0`,{
+        next: {revalidate:3600},
+    });
 
     if(!response.ok){
         throw new Error(`Response status: ${response.status}`)
