@@ -1,4 +1,4 @@
-import {Show} from "../types/show";
+import {Show, Episode} from "../types/show";
 
 const BASE_URL = "https://api.tvmaze.com";
 
@@ -46,4 +46,32 @@ export async function searchShows(searchInput: string): Promise<Show[]> {
 
     return data.map((result)=> result.show);
 
+}
+
+export async function getShowDetails(id: string): Promise<Show | null> {
+    const res = await fetch(`${BASE_URL}/shows/${id}`);
+
+    if (res.status === 404) {
+        return null;
+    }
+
+    if (!res.ok) {
+        throw new Error(`Failed to fetch show details for ID ${id}`);
+    }
+
+    return res.json();
+}
+
+export async function getShowEpisodes(id: string): Promise<Episode[]> {
+    const res = await fetch(`${BASE_URL}/shows/${id}/episodes`);
+
+    if (res.status === 404) {
+        return [];
+    }
+
+    if (!res.ok) {
+        throw new Error(`Failed to fetch episodes for ID ${id}`);
+    }
+
+    return res.json();
 }
