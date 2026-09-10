@@ -3,6 +3,8 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getShowDetails, getShowEpisodes } from '@/app/lib/tvmaze';
 import { stripHtml } from '@/app/lib/stripHtml';
+import { isShowInWatchlist } from '@/app/lib/watchlist';
+import { WatchlistButton } from '@/app/components/WatchlistButton';
 
 interface ShowPageProps {
     params: Promise<{ id: string }>;
@@ -11,9 +13,10 @@ interface ShowPageProps {
 export default async function ShowDetailsPage({ params }: ShowPageProps) {
     const { id } = await params;
 
-    const [show, episodes] = await Promise.all([
+    const [show, episodes, inWatchlist] = await Promise.all([
         getShowDetails(id),
         getShowEpisodes(id),
+        isShowInWatchlist(Number(id))
     ]);
 
     if (!show) {
@@ -30,6 +33,12 @@ export default async function ShowDetailsPage({ params }: ShowPageProps) {
                 className="inline-flex items-center border border-gray-300 rounded-b-md px-3 py-2 text-sm font-medium text-slate-400 hover:bg-gray-600 hover:text-white mb-6 transition-colors"
             >
                 ← Back to catalogue
+            </Link>
+            <Link
+                href="/lista"
+                className="inline-flex items-center mx-4 border border-gray-300 rounded-b-md px-3 py-2 text-sm font-medium text-slate-400 hover:bg-gray-600 hover:text-white mb-6 transition-colors"
+                >
+                My list →
             </Link>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
@@ -67,6 +76,10 @@ export default async function ShowDetailsPage({ params }: ShowPageProps) {
                     <span className="text-slate-400">
                     Episodes: {episodes.length}
                     </span>
+                </div>
+
+                <div className="mb-6">
+                    <WatchlistButton showId={show.id} isInWatchlist={inWatchlist} />
                 </div>
 
                 {show.genres && show.genres.length > 0 && (
