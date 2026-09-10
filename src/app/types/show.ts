@@ -14,4 +14,15 @@ export interface Show {
     genres: string[];
     rating: ShowRating;
     summary: string | null;
+    premiered?: string | null;
+}
+
+export interface Episode {
+    id: number;
+    name: string;
+    season: number;
+    number: number;
+    airdate?: string | null;
+    summary?: string | null;
+    image?: ShowImage | null;
 }
